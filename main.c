@@ -8,6 +8,8 @@ const int SCREENWIDTH = 1200;
 const int SCREENHEIGHT = 950;
 int speedFactor =3;
 int bulletspeedFactor=4;
+int asteroidSpeedFactor=1;
+
 Vector2 shipPosition = {(float)((SCREENWIDTH/2)-80), (float)((SCREENHEIGHT/2)-120)};
 float rotation=0.0f;
 
@@ -85,7 +87,7 @@ int main(void) {
                     
                     DrawTexturePro(asteroidImg,sourceRecAsteroid,destRecAsteroid,(Vector2){(float)destRecAsteroid.width/2,(float)destRecAsteroid.height/2},asteroids[i].rotation,WHITE);
                     
-                    printf("%d %d %d \n", (int)asteroids[i].position.x, (int)asteroids[i].position.y, i);
+                    // printf("%d %d %d \n", (int)asteroids[i].position.x, (int)asteroids[i].position.y, i);
                 } 
             }
         EndDrawing();
@@ -96,11 +98,16 @@ int main(void) {
         shipPosition.x = cos(rotation * DEG2RAD) * speedFactor + shipPosition.x;
         shipPosition.y = (sin(rotation * DEG2RAD) * speedFactor) + shipPosition.y;
         for(int i=0;i<=bulletIndex;i++){
-                // Vector2 bulletPosition = {shipPosition.x + (sourceRecSpaceshipSpaceship.width/2)*cos(rotation * DEG2RAD),shipPosition.y + (sourceRecSpaceship.height/2)*(sin(rotation * DEG2RAD))};
-                // Vector2 bulletDirection={(cos(rotation * DEG2RAD)),(sin(rotation * DEG2RAD))};
-                bullets[i].position.x+= bulletspeedFactor*bullets[i].velocity.x;
-                bullets[i].position.y+= bulletspeedFactor*bullets[i].velocity.y;
+            // Vector2 bulletPosition = {shipPosition.x + (sourceRecSpaceshipSpaceship.width/2)*cos(rotation * DEG2RAD),shipPosition.y + (sourceRecSpaceship.height/2)*(sin(rotation * DEG2RAD))};
+            // Vector2 bulletDirection={(cos(rotation * DEG2RAD)),(sin(rotation * DEG2RAD))};
+            bullets[i].position.x+= bulletspeedFactor*bullets[i].velocity.x;
+            bullets[i].position.y+= bulletspeedFactor*bullets[i].velocity.y;
 
+        }
+
+        for (int i=0;i<=asteroidIndex;i++){
+            asteroids[i].position.x+=asteroids[i].velocity.x*asteroidSpeedFactor;
+            asteroids[i].position.y+=asteroids[i].velocity.y*asteroidSpeedFactor;
         }
         
 
@@ -163,9 +170,8 @@ int randomInt(int min, int max){
     
     // int min = 1;
     // int max = 100;
-    int random = (rand() % (max - min + 1)) + min; 
+    int random = (int)((rand() % (max - min + 1)) + min); 
     return random;
-
 
 
 }
@@ -185,7 +191,7 @@ Vector2 asteroidSpawnLogic(void){
     while (end){
         int distance=sqrt((x-randX)*(x-randX) + (y-randY)*(y-randY));
         int max2=0;
-        if (distance<180){
+        if (distance<300){
             if (randY-100 >=50){
                 int max2=-50;
                 
@@ -193,7 +199,7 @@ Vector2 asteroidSpawnLogic(void){
             else{
                 int max2=+50;
             }
-            srand(time(NULL));
+            // srand(time(NULL));
             randY=randomInt(1,randY+max2);
         }
         else{
@@ -209,15 +215,16 @@ Vector2 asteroidSpawnLogic(void){
 void asteroidGenerator(){
     
     Vector2 asteroidPosition=asteroidSpawnLogic();
-    printf("%d \n", (int)asteroidPosition.x);
-    
-    asteroids[asteroidIndex].rotation=randomInt(0,360) ;
-    Vector2 asteroidDirection= {(cos(asteroids[asteroidIndex].rotation) * DEG2RAD),(sin(asteroids[asteroidIndex].rotation))};
+    // printf("%d \n", (int)asteroidPosition.x);
+    int r_int=(int)randomInt(0,360);
+    asteroids[asteroidIndex].rotation=r_int ;
+    printf("%f - \n",asteroids[asteroidIndex].rotation);
+    Vector2 asteroidDirection= {(cos(asteroids[asteroidIndex].rotation * DEG2RAD)),(sin(asteroids[asteroidIndex].rotation*DEG2RAD))};
     asteroids[asteroidIndex].position=asteroidPosition;
     
     asteroids[asteroidIndex].velocity=asteroidDirection;
     
-    asteroids[asteroidIndex].size=randomInt(0,2);
+    asteroids[asteroidIndex].size=randomInt(0,1);
     // asteroids[asteroidIndex].size=1;
     asteroids[asteroidIndex].active=true;
     asteroidIndex+=1;
